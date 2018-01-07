@@ -55,11 +55,9 @@ int yylex(void);
 %token DECLARE DECLARE_ARRAY
 %token WHILE IF PRINTF BREAK RETURN GETS STRLEN CONTINUE FOR ISDIGIT STRCMP
 
-/* no associativity */
 %nonassoc IFX
 %nonassoc ELSE
 
-/* left associativity */
 %left EQ_OP NE_OP '>' '<'
 %left '+' '-'
 %left '*' '/'
@@ -166,60 +164,42 @@ expr:
 nodeType *conTyp(typeEnum value) {
     typNodeType *p;
     p = new typNodeType();
-    /* copy information */
-    /* set the new node to type node */
     p->type = typeTyp;
-    /* set type node value */
     p->value = value;
     return p;
 }
 nodeType *conInt(int value) {
     intNodeType *p;
     p = new intNodeType();
-    /* copy information */
-    /* set the new node to integer node */
     p->type = typeInt;
-    /* set integer node value */
     p->value = value;
     return p;
 }
 nodeType *conDbl(double value) {
     dblNodeType *p;
     p = new dblNodeType();
-    /* copy information */
-    /* set the new node to double node */
     p->type = typeDbl;
-    /* set double node value */
     p->value = value;
     return p;
 }
 nodeType *conChr(int i) {
     chrNodeType *p;
     p = new chrNodeType();
-    /* copy information */
-    /* set the new node to character node */
     p->type = typeChr;
-    /* set character node index in chr vector */
     p->i = i;
     return p;
 }
 nodeType *conStr(int i) {
     strNodeType *p;
     p = new strNodeType();
-    /* copy information */
-    /* set the new node to string node */
     p->type = typeStr;
-    /* set string node index in str vector */
     p->i = i;
     return p;
 }
 nodeType *id(int i) {
     idNodeType *p;
     p = new idNodeType();
-    /* copy information */
-    /* set the new node to identifier node */
     p->type = typeId;
-    /* set identifier index in sym vector */
     p->i = i;
     return p;
 }
@@ -228,19 +208,12 @@ nodeType *opr(int oper, int nops, ...) {
     oprNodeType *p;
     int i;
     p = new oprNodeType();
-    /* copy information */
-    /* set the new node to identifier node */
     p->type = typeOpr;
-    /* set oper */
     p->oper = oper;
-    /* set nops */
     p->nops = nops;
-    /* make ap be the pointer for the argument behind nops */
     va_start(ap, nops);
-    /* add operand pointer(s) */
     for (i = 0; i < nops; i++)
         p->op.push_back(va_arg(ap, nodeType*));
-    /* make ap to null */
     va_end(ap);
     return p;
 }
@@ -249,19 +222,12 @@ nodeType *sta(int mark, int npts, ...) {
     staNodeType *p;
     int i;
     p = new staNodeType();
-    /* copy information */
-    /* set the new node to statement node */
     p->type = typeSta;
-    /* set mark */
     p->mark = mark;
-    /* set npts */
     p->npts = npts;
-    /* make ap be the pointer for the argument behind nops */
     va_start(ap, npts);
-    /* add operand pointer(s) */
     for (i = 0; i < npts; i++)
         p->pt.push_back(va_arg(ap, nodeType*));
-    /* make ap to null */
     va_end(ap);
     return p;
 }
@@ -270,17 +236,11 @@ nodeType *par(int npts, ...) {
     parNodeType *p;
     int i;
     p = new parNodeType();
-    /* copy information */
-    /* set the new node to statement node */
     p->type = typePar;
-    /* set npts */
     p->npts = npts;
-    /* make ap be the pointer for the argument behind nops */
     va_start(ap, npts);
-    /* add operand pointer(s) */
     for (i = 0; i < npts; i++)
         p->pt.push_back(va_arg(ap, nodeType*));
-    /* make ap to null */
     va_end(ap);
     return p;
 }
@@ -292,12 +252,8 @@ nodeType *eps(int neps, ...) {
     epsNodeType *p;
     int i;
     p = new epsNodeType();
-    /* copy information */
-    /* set the new node to identifier node */
     p->type = typeEps;
-    /* set neps */
     p->neps = neps;
-    /* make ap be the pointer for the argument behind nops */
     va_start(ap, neps);
     p->ep.push_back(va_arg(ap, nodeType*));
     if (neps > 1) {
@@ -317,12 +273,8 @@ nodeType *lis(int nsts, ...) {
     lisNodeType *p;
     int i;
     p = new lisNodeType();
-    /* copy information */
-    /* set the new node to identifier node */
     p->type = typeLis;
-    /* set nsts */
     p->nsts = nsts;
-    /* make ap be the pointer for the argument behind nops */
     va_start(ap, nsts);
     p->st.push_back(va_arg(ap, nodeType*));
     if (nsts > 1) {
@@ -342,12 +294,8 @@ nodeType *prs(int npas, ...) {
     prsNodeType *p;
     int i;
     p = new prsNodeType();
-    /* copy information */
-    /* set the new node to identifier node */
     p->type = typePrs;
-    /* set nsts */
     p->npas = npas;
-    /* make ap be the pointer for the argument behind nops */
     va_start(ap, npas);
     p->pa.push_back(va_arg(ap, nodeType*));
     if (npas > 1) {
@@ -364,14 +312,9 @@ nodeType *fun(int npts, ...) {
     funNodeType *p;
     int i;
     p = new funNodeType();
-    /* copy information */
-    /* set the new node to identifier node */
     p->type = typeFun;
-    /* set npts */
     p->npts = npts;
-    /* make ap be the pointer for the argument behind nops */
     va_start(ap, npts);
-    /* add operand pointer(s) */
     for (i = 0; i < npts; i++)
         p->pt.push_back(va_arg(ap, nodeType*));
     va_end(ap);
@@ -385,12 +328,8 @@ nodeType *pro(int nfns, ...) {
     proNodeType *p;
     int i;
     p = new proNodeType();
-    /* copy information */
-    /* set the new node to identifier node */
     p->type = typePro;
-    /* set nsts */
     p->nfns = nfns;
-    /* make ap be the pointer for the argument behind nops */
     va_start(ap, nfns);
     p->fn.push_back(va_arg(ap, nodeType*));
     if (nfns > 1) {
@@ -476,9 +415,6 @@ void showSym(vector<string> sym) {
     return;
 }
 int main(int argc, char *argv[]) {
-    // #if YYDEBUG
-       // yydebug = 1;
-    // #endif
     yyin = fopen(argv[1], "r");
     generated_code = fopen(argv[2], "w");
     yyparse();
