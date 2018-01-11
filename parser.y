@@ -435,14 +435,10 @@ nodeType *lis(int nsts, ...) {
 
     p = new lisNodeType();
 
-    /* copy information */
-    /* set the new node to identifier node */
     p->type = typeLis;
 
-    /* set nsts */
     p->nsts = nsts;
 
-    /* make ap be the pointer for the argument behind nops */
     va_start(ap, nsts);
 
     p->st.push_back(va_arg(ap, nodeType*));
@@ -469,14 +465,10 @@ nodeType *prs(int npas, ...) {
 
     p = new prsNodeType();
 
-    /* copy information */
-    /* set the new node to identifier node */
     p->type = typePrs;
 
-    /* set nsts */
     p->npas = npas;
 
-    /* make ap be the pointer for the argument behind nops */
     va_start(ap, npas);
 
     p->pa.push_back(va_arg(ap, nodeType*));
@@ -498,18 +490,12 @@ nodeType *fun(int npts, ...) {
     int i;
 
     p = new funNodeType();
-
-    /* copy information */
-    /* set the new node to identifier node */
     p->type = typeFun;
 
-    /* set npts */
     p->npts = npts;
 
-    /* make ap be the pointer for the argument behind nops */
     va_start(ap, npts);
 
-    /* add operand pointer(s) */
     for (i = 0; i < npts; i++)
         p->pt.push_back(va_arg(ap, nodeType*));
 
@@ -528,14 +514,10 @@ nodeType *pro(int nfns, ...) {
 
     p = new proNodeType();
 
-    /* copy information */
-    /* set the new node to identifier node */
     p->type = typePro;
 
-    /* set nsts */
     p->nfns = nfns;
 
-    /* make ap be the pointer for the argument behind nops */
     va_start(ap, nfns);
 
     p->fn.push_back(va_arg(ap, nodeType*));
@@ -629,9 +611,6 @@ void showSym(vector<string> sym) {
 }
 
 int main(int argc, char *argv[]) {
-    // #if YYDEBUG
-       // yydebug = 1;
-    // #endif
     yyin = fopen(argv[1], "r");
     generated_code = fopen(argv[2], "w");
     yyparse();

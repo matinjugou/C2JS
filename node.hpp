@@ -7,137 +7,114 @@
 
 using namespace std;
 
-/* node types */
 typedef enum { typeTyp, typeInt, typeDbl, typeChr, typeStr, typeId, typeOpr, typeEps,
                 typeSta, typeLis, typeFun, typePar, typePrs, typePro } nodeEnum;
 
-/* data types */
 typedef enum { charType, intType, doubleType } typeEnum;
 
-/* super class for all nodes */
 class nodeType
 {
 public:
     nodeEnum type;
 };
 
-/* types */
 class typNodeType : public nodeType
 {
 public:
-    typeEnum value;                  /* type category */
+    typeEnum value;                 
 };
 
-/* integers */
 class intNodeType : public nodeType
 {
 public:
-    int value;                      /* value of integer */
+    int value;                      
 };
 
-/* doubles */
 class dblNodeType : public nodeType
 {
 public:
-    double value;                      /* value of double */
+    double value;                      
 };
 
-/* chars */
 class chrNodeType : public nodeType
 {
 public:
-    int i;                           /* index to global chr vector */
+    int i;                           
 };
 
-/* strings */
 class strNodeType : public nodeType
 {
 public:
-    int i;                          /* index to global str vector */
+    int i;                          
 };
 
-/* identifiers */
 class idNodeType : public nodeType
 {
 public:
-    int i;                          /* index to global sym vector */
+    int i;                          
 };
 
-/* expressions */
 class oprNodeType : public nodeType
 {
 public:
-    int oper;                       /* operator */
-    int nops;                       /* number of operands */
-    vector<nodeType*> op;           /* operands, extended at runtime */
+    int oper;                       
+    int nops;                       
+    vector<nodeType*> op;           
 };
 
-/* expression list */
 class epsNodeType : public nodeType
 {
 public:
-    int neps;                       /* number of expressions */
-    vector<nodeType*> ep;           /* expressions, extended at runtime */
+    int neps;                       
+    vector<nodeType*> ep;           
 };
 
-/* statements */
 class staNodeType : public nodeType
 {
 public:
-    int mark;                       /* show the statement type */
-    int npts;                       /* number of parts */
-    vector<nodeType*> pt;           /* parts, extended at runtime */
+    int mark;                       
+    int npts;                       
+    vector<nodeType*> pt;           
 };
 
-/* statement lists */
 class lisNodeType : public nodeType {
 public:
-    int nsts;                       /* number of statements */
-    vector<nodeType*> st;           /* statements, extended at runtime */
+    int nsts;                       
+    vector<nodeType*> st;           
 };
 
-/* functions */
 class funNodeType : public nodeType {
 public:
-    int npts;                       /* number of parts, usually be 4 */
-    vector<nodeType*> pt;           /* parts, extended at runtime */
+    int npts;                       
+    vector<nodeType*> pt;           
 };
 
-/* program */
 class proNodeType : public nodeType {
 public:
-    int nfns;                       /* number of functions */
-    vector<nodeType*> fn;           /* functions, extended at runtime */
+    int nfns;                       
+    vector<nodeType*> fn;           
 };
 
-/* params */
 class parNodeType : public nodeType {
 public:
-    int npts;                       /* number of parts, usually be 2 */
-    vector<nodeType*> pt;           /* parts, extended at runtime */
+    int npts;                       
+    vector<nodeType*> pt;           
 };
 
-/* params list */
 class prsNodeType : public nodeType {
 public:
-    int npas;                       /* number of params */
-    vector<nodeType*> pa;           /* params, extended at runtime */
+    int npas;                      
+    vector<nodeType*> pa;          
 };
 
-// vector for identifier
 extern vector<string> sym;
 
-// vector for string
 extern vector<string> str;
 
-// vector for char
 extern vector<string> chr;
 
-// output file for AST visualization
 extern FILE *out_graph;
 
-// output file for generated JS code
 extern FILE *generated_code;
 
-// input file of origin C code
 extern FILE *yyin;

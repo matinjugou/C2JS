@@ -6,5 +6,4 @@
 #include "node.hpp"
 #include "parser.hpp"
 
-// generate the js code to output file, based on a program node
 extern void codeGenPro(nodeType* p);

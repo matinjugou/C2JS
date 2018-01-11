@@ -13,70 +13,44 @@
 
 using namespace std;
 
-/* vectors for node js require module statements */
-// variable related to package
 vector<string> container;
-// package name
 vector<string> module;
 
 FILE *generated_code;
 
-// set js code indentation to 4 spaces
 #define UNIT_INDENT 4
 
-/**************************************************************** require module **********************************************/
-// set js module for 'require' module statements
 void setModuleInfo(string container_name, string module_name);
 
-// get require module statements based on module info
 string getModuleInfo();
-/******************************************************************************************************************************/
-
-
-/********************************************** code generation function on different level *********************************/
-// return the code of a function
 string codeGenFun(nodeType* p);
 
-// return the code of a param list
 string codeGenPrs(nodeType* p);
 
-// return the code of a param
 string codeGenPar(nodeType* p);
 
-// return the code of a block
 string codeGenLis(nodeType* p, int indent_level);
 
-// return the code of a statement
 string codeGenSta(nodeType* p, int indent_level);
 
-// return the code of a expression list
 string codeGenEps(nodeType* p);
 
-// return the code of a expression
 string codeGenOpr(nodeType *p);
 
-// return the code of a identifier
 string codeGenId(nodeType *p);
 
-// return the code of a string
 string codeGenStr(nodeType *p);
 
-// return the code of a integer
 string codeGenInt(nodeType *p);
 
-// return the code of a double
 string codeGenDbl(nodeType *p);
 
-// return the code of a char
 string codeGenChr(nodeType *p);
 
-// return the code of a type
 string codeGenTyp(nodeType *p);
-/*********************************************************************************************************************/
 
 void setModuleInfo(string container_name, string module_name) {
     vector<string>::iterator result = find(module.begin( ), module.end( ), module_name);
-    // can not find the module
     if (result == module.end()) {
         container.push_back(container_name);
         module.push_back(module_name);
@@ -93,7 +67,6 @@ string getModuleInfo() {
 }
 
 string codeGenTyp(nodeType *p) {
-    // there is no obvious type in js declaration, so return "let" instead of data type.
     if (p->type != typeTyp) {
         cerr << "not typNodeType !" << endl;
     }
@@ -134,7 +107,6 @@ string codeGenStr(nodeType *p_temp) {
         cerr << "not strNodeType !" << endl;
     }
     strNodeType* p = (strNodeType*)p_temp;
-    // return the string as well as the double quotes
     return str[p->i];
 }
 
@@ -393,6 +365,8 @@ void codeGenPro(nodeType* p_temp) {
     }
     proNodeType* p = (proNodeType*)p_temp;
     string ans = "";
+    ans += "'use strict'\n";
+    ans += "require('C2JS_header');\n";
     for (int i = 0; i < p->nfns; i++) {
         ans += codeGenFun(p->fn[i]);
         ans += "\n";
