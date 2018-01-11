@@ -1,90 +1,37 @@
 %{
-//TODO: remove unnecessary header file
-//TODO: Find a way to reduce the shift/reduce conflict, maybe with %nonassoc and %left
-//TODO: rename opr function to exp function
-//TODO: refactor the yyerror function to avoid compiler warning
-//TODO: rename the ex function to make code more semantic
-//TODO: modify the command line option to support visualizing AST and generating code
-//TODO: the code constructor function are much alike, reduce the redundances
 
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdarg.h>
 #include <string>
+#include <stdarg.h>
 
-#include "node.hpp"
-#include "codegen.hpp"
+#include "node.h"
+#include "codegen.h"
 
 using namespace std;
 
-/******************************* node construction function ********************************************/
-// construct a program type node, return the pointer
 nodeType *pro(int nfns, ...);
-
-// construct a function type node, return the pointer
 nodeType *fun(int npts, ...);
-
-// construct a block type node, return the pointer
 nodeType *lis(int nlis, ...);
-
-// construct a param list type node, return the pointer
 nodeType *prs(int npas, ...);
-
-// construct a param type node, return the pointer
 nodeType *par(int npts, ...);
-
-// construct a statement type node, return the pointer
 nodeType *sta(int mark, int npts, ...);
-
-// construct a expression type node, return the pointer
 nodeType *opr(int oper, int nops, ...);
-
-// construct a expression list node, return the pointer
 nodeType *eps(int neps, ...);
-
-// construct a identifier type node, return the pointer
 nodeType *id(int i);
-
-// construct a type type node, return the pointer
 nodeType *conTyp(typeEnum value);
-
-// construct a int type node, return the pointer
 nodeType *conInt(int value);
-
-// construct a int type node, return the pointer
 nodeType *conDbl(double value);
-
-// construct a char type node, return the pointer
 nodeType *conChr(int i);
-
-// construct a string type node, return the pointer
 nodeType *conStr(int i);
-/********************************************************************************************************/
-
-/******************************** get node children num function ****************************************/
-// get param num of a param list
 int getParamNum(nodeType* params);
-
-// get statement num of a block type
 int getStateNum(nodeType* p);
-
-// get expression num of a expression list
 int getExpNum(nodeType* p);
-
-// get function num of a program
 int getFuncNum(nodeType* p);
-/*********************************************************************************************************/
-
-// free the node of AST
 void freeNode(nodeType *p);
-
 void yyerror(char* s);
-
-// used by yacc itself
 int yylex(void);
-
-// #define YYDEBUG 1
 %}
 
 /* set yylval as the following union type */
@@ -108,11 +55,9 @@ int yylex(void);
 %token DECLARE DECLARE_ARRAY
 %token WHILE IF PRINTF BREAK RETURN GETS STRLEN CONTINUE FOR ISDIGIT STRCMP
 
-/* no associativity */
 %nonassoc IFX
 %nonassoc ELSE
 
-/* left associativity */
 %left EQ_OP NE_OP '>' '<'
 %left '+' '-'
 %left '*' '/'
@@ -216,326 +161,188 @@ expr:
         | '(' expr ')'                                                         { $$ = opr('(', 1, $2); }
         ;
 %%
-
 nodeType *conTyp(typeEnum value) {
     typNodeType *p;
-
     p = new typNodeType();
-
-    /* copy information */
-    /* set the new node to type node */
     p->type = typeTyp;
-
-    /* set type node value */
     p->value = value;
-
     return p;
 }
-
 nodeType *conInt(int value) {
     intNodeType *p;
-
     p = new intNodeType();
-
-    /* copy information */
-    /* set the new node to integer node */
     p->type = typeInt;
-
-    /* set integer node value */
     p->value = value;
-
     return p;
 }
-
 nodeType *conDbl(double value) {
     dblNodeType *p;
-
     p = new dblNodeType();
-
-    /* copy information */
-    /* set the new node to double node */
     p->type = typeDbl;
-
-    /* set double node value */
     p->value = value;
-
     return p;
 }
-
 nodeType *conChr(int i) {
     chrNodeType *p;
-
     p = new chrNodeType();
-
-    /* copy information */
-    /* set the new node to character node */
     p->type = typeChr;
-
-    /* set character node index in chr vector */
     p->i = i;
-
     return p;
 }
-
 nodeType *conStr(int i) {
     strNodeType *p;
-
     p = new strNodeType();
-
-    /* copy information */
-    /* set the new node to string node */
     p->type = typeStr;
-
-    /* set string node index in str vector */
     p->i = i;
-
     return p;
 }
-
 nodeType *id(int i) {
     idNodeType *p;
-
     p = new idNodeType();
-
-    /* copy information */
-    /* set the new node to identifier node */
     p->type = typeId;
-    /* set identifier index in sym vector */
     p->i = i;
-
     return p;
 }
-
 nodeType *opr(int oper, int nops, ...) {
     va_list ap;
     oprNodeType *p;
     int i;
-
     p = new oprNodeType();
-
-    /* copy information */
-    /* set the new node to identifier node */
     p->type = typeOpr;
-
-    /* set oper */
     p->oper = oper;
-
-    /* set nops */
     p->nops = nops;
-
-    /* make ap be the pointer for the argument behind nops */
     va_start(ap, nops);
-
-    /* add operand pointer(s) */
     for (i = 0; i < nops; i++)
         p->op.push_back(va_arg(ap, nodeType*));
-
-    /* make ap to null */
     va_end(ap);
     return p;
 }
-
 nodeType *sta(int mark, int npts, ...) {
     va_list ap;
     staNodeType *p;
     int i;
-
     p = new staNodeType();
-
-    /* copy information */
-    /* set the new node to statement node */
     p->type = typeSta;
-
-    /* set mark */
     p->mark = mark;
-
-    /* set npts */
     p->npts = npts;
-
-    /* make ap be the pointer for the argument behind nops */
     va_start(ap, npts);
-
-    /* add operand pointer(s) */
     for (i = 0; i < npts; i++)
         p->pt.push_back(va_arg(ap, nodeType*));
-
-    /* make ap to null */
     va_end(ap);
     return p;
 }
-
 nodeType *par(int npts, ...) {
     va_list ap;
     parNodeType *p;
     int i;
-
     p = new parNodeType();
-
-    /* copy information */
-    /* set the new node to statement node */
     p->type = typePar;
-
-    /* set npts */
     p->npts = npts;
-
-    /* make ap be the pointer for the argument behind nops */
     va_start(ap, npts);
-
-    /* add operand pointer(s) */
     for (i = 0; i < npts; i++)
         p->pt.push_back(va_arg(ap, nodeType*));
-
-    /* make ap to null */
     va_end(ap);
     return p;
 }
-
 int getExpNum(nodeType* exps) {
     return ((epsNodeType*)exps)->neps;
 }
-
 nodeType *eps(int neps, ...) {
     va_list ap;
     epsNodeType *p;
     int i;
-
     p = new epsNodeType();
-
-    /* copy information */
-    /* set the new node to identifier node */
     p->type = typeEps;
-
-    /* set neps */
     p->neps = neps;
-
-    /* make ap be the pointer for the argument behind nops */
     va_start(ap, neps);
-
     p->ep.push_back(va_arg(ap, nodeType*));
-
     if (neps > 1) {
         epsNodeType* expression_list = va_arg(ap, epsNodeType*);
         for (i = 1; i < neps; i++)
             p->ep.push_back(expression_list->ep[i - 1]);
         delete expression_list;
     }
-
     va_end(ap);
     return p;
 }
-
 int getStateNum(nodeType* list) {
     return ((lisNodeType*)list)->nsts;
 }
-
 nodeType *lis(int nsts, ...) {
     va_list ap;
     lisNodeType *p;
     int i;
-
     p = new lisNodeType();
-
     p->type = typeLis;
-
     p->nsts = nsts;
-
     va_start(ap, nsts);
-
     p->st.push_back(va_arg(ap, nodeType*));
-
     if (nsts > 1) {
         lisNodeType* statement_list = va_arg(ap, lisNodeType*);
         for (i = 1; i < nsts; i++)
             p->st.push_back(statement_list->st[i - 1]);
         delete statement_list;
     }
-
     va_end(ap);
     return p;
 }
-
 int getParamNum(nodeType* params) {
     return ((prsNodeType*)params)->npas;
 }
-
 nodeType *prs(int npas, ...) {
     va_list ap;
     prsNodeType *p;
     int i;
-
     p = new prsNodeType();
-
     p->type = typePrs;
-
     p->npas = npas;
-
     va_start(ap, npas);
-
     p->pa.push_back(va_arg(ap, nodeType*));
-
     if (npas > 1) {
         prsNodeType* param_list = va_arg(ap, prsNodeType*);
         for (i = 1; i < npas; i++)
             p->pa.push_back(param_list->pa[i - 1]);
         delete param_list;
     }
-
     va_end(ap);
     return p;
 }
-
 nodeType *fun(int npts, ...) {
     va_list ap;
     funNodeType *p;
     int i;
-
     p = new funNodeType();
     p->type = typeFun;
-
     p->npts = npts;
-
     va_start(ap, npts);
-
     for (i = 0; i < npts; i++)
         p->pt.push_back(va_arg(ap, nodeType*));
-
     va_end(ap);
     return p;
 }
-
 int getFuncNum(nodeType* prog) {
     return ((proNodeType*)prog)->nfns;
 }
-
 nodeType *pro(int nfns, ...) {
     va_list ap;
     proNodeType *p;
     int i;
-
     p = new proNodeType();
-
     p->type = typePro;
-
     p->nfns = nfns;
-
     va_start(ap, nfns);
-
     p->fn.push_back(va_arg(ap, nodeType*));
-
     if (nfns > 1) {
         proNodeType* func_list = va_arg(ap, proNodeType*);
         for (i = 1; i < nfns; i++)
             p->fn.push_back(func_list->fn[i - 1]);
         delete func_list;
     }
-
     va_end(ap);
     return p;
 }
-
 void freeNode(nodeType *p) {
     int i;
-
     if (!p) return;
     switch (p->type) {
         case typeOpr:
@@ -597,11 +404,9 @@ void freeNode(nodeType *p) {
     }
     delete p;
 }
-
 void yyerror(char *s) {
     fprintf(stderr, "%s\n", s);
 }
-
 void showSym(vector<string> sym) {
     cout << sym.size() << endl;
     for (int i = 0; i < sym.size(); i++) {
@@ -609,7 +414,6 @@ void showSym(vector<string> sym) {
     }
     return;
 }
-
 int main(int argc, char *argv[]) {
     yyin = fopen(argv[1], "r");
     generated_code = fopen(argv[2], "w");
